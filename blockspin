@@ -1,0 +1,58 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local RAMAccount = loadstring(game:HttpGet("https://raw.githubusercontent.com/ic3w0lf22/Roblox-Account-Manager/master/RAMAccount.lua"))()
+local MyAccount = RAMAccount.new(player.Name)
+
+-- ฟังก์ชันอัปเดตข้อมูล
+local function updateAccountInfo()
+    local playerGui = player.PlayerGui  -- ประกาศตัวแปร playerGui
+
+    -- ค้นหาทุกโฟลเดอร์ใน PlayerGui ที่มีชื่อเป็นตัวเลข
+    for _, child in ipairs(playerGui:GetChildren()) do
+        -- ตรวจสอบว่า child.Name เป็นตัวเลขทั้งหมด
+        if tonumber(child.Name) then
+            -- ถ้า child.Name เป็นตัวเลข (หมายถึงโฟลเดอร์นั้นเป็นตัวเลข)
+
+            -- ค้นหาภายในโฟลเดอร์ที่เป็นตัวเลขและแสดงผลชื่อ subChild.Name ทุกตัว
+            for _, subChild in ipairs(child:GetChildren()) do
+                -- ถ้าพบว่า subChild เป็นโฟลเดอร์หรือมีไฟล์ในนั้น
+                for _, subbChild in ipairs(subChild:GetChildren()) do
+                    -- ตรวจสอบว่า subbChild เป็น Frame หรือไม่
+                    if subbChild:IsA("Frame") then
+                        -- ค้นหา Options ภายใน Frame ที่พบ
+                        local optionsFolder = subbChild:FindFirstChild("Options")
+                        if optionsFolder then
+                            -- ค้นหาภายใน Options และแสดงผลชื่อ TextLabel ทุกตัว
+                            for _, option in ipairs(optionsFolder:GetChildren()) do
+                                if option:IsA("TextLabel") then
+                                    -- แยกการพิมพ์ข้อความทีละตัว
+                                    local optionText = option.Text
+                                    -- ถ้ามีข้อความหลายบรรทัดใน TextLabel, แยกตามบรรทัด
+                                    for _, line in ipairs(string.split(optionText, "\n")) do
+                                        -- ตรวจสอบว่า line ขึ้นต้นด้วย "Bank Balance:"
+                                        if string.match(line, "^Bank Balance:") then
+
+                                        local moneyLabel = player.PlayerGui.Skills.SkillsHolder.SkillsScrollingFrame:GetChildren()[8]
+                                        local Gem = moneyLabel and moneyLabel.SkillTitle.Text or "N/A"
+                                        local playerGui = player.PlayerGui
+
+                                            -- อัปเดตข้อมูลใน RAMAccount
+                                            MyAccount:SetDescription(tostring(line))
+                                            MyAccount:SetAlias(tostring(Gem))
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+-- เริ่มลูปอัปเดตทุก 30 วินาที
+while true do
+    updateAccountInfo()
+    task.wait(30)
+end
