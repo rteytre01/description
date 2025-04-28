@@ -1,0 +1,15 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local RAMAccount = loadstring(game:HttpGet("https://raw.githubusercontent.com/ic3w0lf22/Roblox-Account-Manager/master/RAMAccount.lua"))()
+local MyAccount = RAMAccount.new(player.Name)
+
+local s = game:GetService("Players").LocalPlayer.DataFolder.Currency
+
+MyAccount:SetAlias(tostring(s))
+
+-- เริ่มลูปอัปเดตทุก 30 วินาที
+while true do
+    updateAccountInfo()
+    task.wait(30)
+end
